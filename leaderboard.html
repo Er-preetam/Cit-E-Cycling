@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Leaderboard &amp; Results | Cit-E Cycling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .trophy-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
+        .trophy-1st { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+        .trophy-2nd { background: linear-gradient(135deg, #C0C0C0, #808080); color: white; }
+        .trophy-3rd { background: linear-gradient(135deg, #CD7F32, #8B4513); color: white; }
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .leaderboard-row:hover { background: rgba(233,69,96,0.05); }
+        .leaderboard-rank { width: 50px; text-align: center; font-weight: 700; color: var(--accent); }
+        .leaderboard-info { flex: 1; }
+        .leaderboard-name { font-weight: 600; color: var(--text); margin: 0; }
+        .leaderboard-detail { font-size: 0.85rem; color: var(--muted); margin: 0; }
+        .leaderboard-stats { display: flex; gap: 1.5rem; text-align: center; min-width: 250px; }
+        .stat-item { flex: 1; }
+        .stat-value { font-weight: 700; color: var(--accent2); font-size: 1.1rem; }
+        .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+        .tab-button {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--border);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--accent2), var(--primary));
+            color: white;
+            border-color: var(--accent);
+        }
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="img/logo.png" alt="Cit-E Cycling Logo" class="navbar-logo-img">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="register_form.html">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-header-shape page-header-shape-1"></div>
+        <div class="page-header-shape page-header-shape-2"></div>
+        <h1>🏆 Leaderboard &amp; Results</h1>
+        <p>Top performers and club rankings across all categories.</p>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main-container" style="max-width:1000px;">
+
+        <!-- TABS -->
+        <div class="card">
+            <div class="card-title">🎯 View by Category</div>
+            <div class="filter-section">
+                <button class="tab-button active" onclick="switchView('performance', this)">⚡ Best Performance</button>
+                <button class="tab-button" onclick="switchView('groups', this)">👥 Club Rankings</button>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE LEADERBOARD -->
+        <div id="performanceView" class="card" style="display:block;">
+            <div class="card-title">⚡ Top Performers</div>
+            <div class="filter-section" style="border:none; padding:0; margin-bottom:1rem;">
+                <button class="tab-button active" id="powerBtn" onclick="switchPerformance('power')">⚡ By Power Output</button>
+                <button class="tab-button" id="distBtn" onclick="switchPerformance('distance')">📏 By Distance</button>
+            </div>
+            <div id="performanceContent">
+                <div class="alert alert-info">📊 Loading performance data...</div>
+            </div>
+        </div>
+
+        <!-- CLUB RANKINGS -->
+        <div id="groupsView" class="card" style="display:none;">
+            <div class="card-title">👥 Club Rankings</div>
+            <div id="groupsContent">
+                <div class="alert alert-info">📊 Loading club rankings...</div>
+            </div>
+        </div>
+
+        <!-- STATISTICS -->
+        <div class="card">
+            <div class="card-title">📊 Event Statistics</div>
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-value" id="totalParticipants">—</div>
+                    <div class="stat-label">Total Participants</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-value" id="totalDistance">—</div>
+                    <div class="stat-label">Total Distance (km)</div>
+                </div>
+                <div class="stat-card gold">
+                    <div class="stat-value" id="totalPower">—</div>
+                    <div class="stat-label">Total Power (kW)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeGroups">—</div>
+                    <div class="stat-label">Active Clubs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INFO PANEL -->
+        <div class="quote-panel" style="margin-top:2rem;">
+            <div class="quote-badge">Prize Distribution</div>
+            <p style="margin:0; line-height:1.8;">
+                🏆 <strong>Prizes are awarded based on:</strong><br>
+                • Best power output across all participants<br>
+                • Greatest distance travelled across all participants<br>
+                • Best performing club (combined power output)
+            </p>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2024 <span>Cit-E Cycling</span> &mdash; All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="interactions.js"></script>
+    <script>
+        var currentView        = 'performance';
+        var currentPerformance = 'power';
+        var cachedData         = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLeaderboardData();
+        });
+
+        function switchView(view, btn) {
+            currentView = view;
+            document.getElementById('performanceView').style.display = view === 'performance' ? 'block' : 'none';
+            document.getElementById('groupsView').style.display      = view === 'groups'      ? 'block' : 'none';
+            document.querySelectorAll('.filter-section:first-of-type .tab-button').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            if (btn) btn.classList.add('active');
+        }
+
+        function switchPerformance(type) {
+            currentPerformance = type;
+            document.getElementById('powerBtn').classList.toggle('active', type === 'power');
+            document.getElementById('distBtn').classList.toggle('active',  type === 'distance');
+            if (cachedData) renderPerformance(cachedData.performance);
+        }
+
+        function loadLeaderboardData() {
+            fetch('get_leaderboard_data.php')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.success) {
+                        showError('Unable to load leaderboard data.');
+                        return;
+                    }
+                    cachedData = data;
+                    renderPerformance(data.performance);
+                    renderGroups(data.groups);
+                    updateStatistics(data.statistics);
+                })
+                .catch(function() {
+                    showError('Unable to connect. Please try again later.');
+                });
+        }
+
+        function renderPerformance(perfData) {
+            var container = document.getElementById('performanceContent');
+            var list = currentPerformance === 'power' ? perfData.power_output : perfData.distance;
+
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No performance data recorded yet. Scores will appear here once participants have competed.</div>';
+                return;
+            }
+
+            var medals = ['🥇','🥈','🥉'];
+            var html = '';
+            list.slice(0, 10).forEach(function(item, idx) {
+                html += '<div class="leaderboard-row">' +
+                    '<div class="leaderboard-rank">' + (medals[idx] || '#' + (idx + 1)) + '</div>' +
+                    '<div class="leaderboard-info">' +
+                        '<p class="leaderboard-name">' + escapeHtml(item.name) + '</p>' +
+                    '</div>' +
+                    '<div class="leaderboard-stats">' +
+                        '<div class="stat-item">' +
+                            '<div class="stat-value">' + (currentPerformance === 'power' ? item.power_output.toFixed(0) + 'W' : item.distance.toFixed(1) + 'km') + '</div>' +
+                            '<div class="stat-label">' + (currentPerformance === 'power' ? 'Power Output' : 'Distance') + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function renderGroups(groups) {
+            var container = document.getElementById('groupsContent');
+            if (!groups || groups.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No club data available yet.</div>';
+                return;
+            }
+
+            var medals = ['🥇','🥈','🥉'];
+            var html = '';
+            groups.slice(0, 10).forEach(function(g, idx) {
+                html += '<div class="leaderboard-row">' +
+                    '<div class="leaderboard-rank">' + (medals[idx] || '#' + (idx + 1)) + '</div>' +
+                    '<div class="leaderboard-info">' +
+                        '<p class="leaderboard-name">' + escapeHtml(g.club_name) + '</p>' +
+                        '<p class="leaderboard-detail">Location: ' + escapeHtml(g.location) + ' &bull; Members: ' + g.member_count + '</p>' +
+                    '</div>' +
+                    '<div class="leaderboard-stats">' +
+                        '<div class="stat-item">' +
+                            '<div class="stat-value">' + g.total_power_output.toFixed(0) + 'W</div>' +
+                            '<div class="stat-label">Total Power</div>' +
+                        '</div>' +
+                        '<div class="stat-item">' +
+                            '<div class="stat-value">' + g.total_distance.toFixed(1) + 'km</div>' +
+                            '<div class="stat-label">Total Distance</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function updateStatistics(stats) {
+            document.getElementById('totalParticipants').textContent = stats.total_participants || 0;
+            document.getElementById('totalDistance').textContent     = (stats.total_distance || 0).toFixed(0);
+            document.getElementById('totalPower').textContent        = ((stats.total_power || 0) / 1000).toFixed(1);
+            document.getElementById('activeGroups').textContent      = stats.active_groups || 0;
+        }
+
+        function showError(msg) {
+            document.getElementById('performanceContent').innerHTML = '<div class="alert alert-warning">⚠️ ' + msg + '</div>';
+            document.getElementById('groupsContent').innerHTML      = '<div class="alert alert-warning">⚠️ ' + msg + '</div>';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"']/g, function(m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
+            });
+        }
+    </script>
+
+</body>
+</html>

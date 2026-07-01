@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cycling Clubs | Cit-E Cycling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .group-card {
+            background: linear-gradient(135deg, rgba(233,69,96,0.08), rgba(15,52,96,0.08));
+            border: 1px solid rgba(233,69,96,0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .group-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(233,69,96,0.15);
+            border-color: rgba(233,69,96,0.4);
+        }
+        .group-stat {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        .group-stat-item { flex: 1; text-align: center; }
+        .group-stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .group-stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-top: 0.25rem; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="img/logo.png" alt="Cit-E Cycling Logo" class="navbar-logo-img">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="register_form.html">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-header-shape page-header-shape-1"></div>
+        <div class="page-header-shape page-header-shape-2"></div>
+        <h1>👥 Cycling Clubs</h1>
+        <p>Registered cycling clubs and their performance statistics for Cit-E Cycling events.</p>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main-container" style="max-width:900px;">
+
+        <div class="card">
+            <div class="card-title">📋 Registered Clubs</div>
+
+            <div id="groupsContainer" style="margin-bottom:2rem;">
+                <div class="alert alert-info">📊 Loading clubs data...</div>
+            </div>
+
+            <a href="register_form.html" class="btn btn-primary">➕ Register Interest</a>
+        </div>
+
+        <!-- CLUB STATISTICS -->
+        <div class="card">
+            <div class="card-title">📊 Club Statistics</div>
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-value" id="totalGroups">—</div>
+                    <div class="stat-label">Total Clubs</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-value" id="totalMembers">—</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+                <div class="stat-card gold">
+                    <div class="stat-value" id="topGroup">—</div>
+                    <div class="stat-label">Largest Club</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="topPerformer">—</div>
+                    <div class="stat-label">Top Power Output</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2024 <span>Cit-E Cycling</span> &mdash; All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="interactions.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGroups();
+        });
+
+        function loadGroups() {
+            fetch('get_groups_data.php')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.success) {
+                        showError('Unable to load clubs data.');
+                        return;
+                    }
+                    displayGroups(data.groups);
+                    updateStatistics(data.statistics);
+                })
+                .catch(function() {
+                    showError('Unable to connect. Please try again later.');
+                });
+        }
+
+        function displayGroups(groups) {
+            var container = document.getElementById('groupsContainer');
+
+            if (!groups || groups.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">📭 No clubs registered yet. Register your interest to join one!</div>';
+                return;
+            }
+
+            var html = '';
+            groups.forEach(function(g) {
+                html += '<div class="group-card">' +
+                    '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
+                        '<div>' +
+                            '<h5 style="color:var(--accent2); margin:0; font-weight:700;">' + escapeHtml(g.club_name) + '</h5>' +
+                            '<p style="color:var(--muted); font-size:0.9rem; margin:0.3rem 0;">📍 ' + escapeHtml(g.location) + '</p>' +
+                        '</div>' +
+                        '<span style="background:rgba(233,69,96,0.1); padding:0.4rem 0.8rem; border-radius:20px; font-size:0.85rem; color:var(--accent);">✓ Active</span>' +
+                    '</div>' +
+                    '<div class="group-stat">' +
+                        '<div class="group-stat-item">' +
+                            '<div class="group-stat-value">' + g.member_count + '</div>' +
+                            '<div class="group-stat-label">Members</div>' +
+                        '</div>' +
+                        '<div class="group-stat-item">' +
+                            '<div class="group-stat-value">' + g.total_distance.toFixed(1) + 'km</div>' +
+                            '<div class="group-stat-label">Total Distance</div>' +
+                        '</div>' +
+                        '<div class="group-stat-item">' +
+                            '<div class="group-stat-value">' + g.total_power_output.toFixed(0) + 'W</div>' +
+                            '<div class="group-stat-label">Total Power</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function updateStatistics(stats) {
+            document.getElementById('totalGroups').textContent   = stats.total_groups  || 0;
+            document.getElementById('totalMembers').textContent  = stats.total_members || 0;
+            document.getElementById('topGroup').textContent      = stats.largest_group || '—';
+            document.getElementById('topPerformer').textContent  = stats.top_performer || '—';
+        }
+
+        function showError(msg) {
+            document.getElementById('groupsContainer').innerHTML = '<div class="alert alert-warning">⚠️ ' + msg + '</div>';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"']/g, function(m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
+            });
+        }
+    </script>
+
+</body>
+</html>

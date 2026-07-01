@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Secure Admin | Cit-E Cycling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        .login-hint {
+            background: rgba(233, 69, 96, 0.1);
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="img/logo.png" alt="Cit-E Cycling Logo" class="navbar-logo-img">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="register_form.html">Register</a></li>
+            <li><a href="admin_login.html" class="active">Secure Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-header login-hero">
+        <div class="page-header-shape page-header-shape-1"></div>
+        <div class="page-header-shape page-header-shape-2"></div>
+        <h1>🔐 Secure Admin</h1>
+        <p>Authorised staff access for managing participants, results, and event details.</p>
+    </div>
+
+    <main class="main-container" style="max-width: 940px;">
+        <div class="login-wrap">
+            <div>
+                <div class="login-box">
+                    <div class="login-logo">
+                        <span class="bike">🚴</span>
+                        <h1>Cit-E Cycling</h1>
+                        <p>Secure Admin — Authorised Access Only</p>
+                    </div>
+
+                <form id="loginForm" action="login.php" method="POST" autocomplete="off" novalidate>
+
+                    <div class="form-group">
+                        <label for="username">👤 Username <span class="required-star">*</span></label>
+                        <input type="text"
+                               id="username"
+                               name="username"
+                               class="form-control"
+                               placeholder="Enter your username"
+                               autocomplete="off"
+                               maxlength="50"
+                               required>
+                        <div class="invalid-feedback">Username is required.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">🔒 Password <span class="required-star">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Enter your password"
+                                   autocomplete="off"
+                                   maxlength="100"
+                                   required>
+                            <button type="button" class="toggle-pw" onclick="togglePassword()" title="Show/hide password">👁</button>
+                        </div>
+                        <div class="invalid-feedback">Password is required.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem;">
+                        🔐 Access Secure Admin
+                    </button>
+
+                </form>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← Back to main website</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 <span>Cit-E Cycling</span> &mdash; All rights reserved.
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="interactions.js"></script>
+    
+    <script>
+    function togglePassword() {
+        const pw = document.getElementById('password');
+        pw.type = pw.type === 'password' ? 'text' : 'password';
+    }
+
+    // ── Helper: validate a login field and toggle is-valid / is-invalid ──
+    function validateLoginField(id) {
+        const el = document.getElementById(id);
+        const val = el.value.trim();
+        let ok = val.length > 0;
+        el.classList.toggle('is-invalid', !ok);
+        el.classList.toggle('is-valid', ok);
+        return ok;
+    }
+
+    // ── Real-time: validate on every keystroke and on blur ──
+    ['username', 'password'].forEach(function(id) {
+        const el = document.getElementById(id);
+        el.addEventListener('input', function() { validateLoginField(id); });
+        el.addEventListener('blur',  function() { validateLoginField(id); });
+    });
+
+    // ── Submit handler ──
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const uOk = validateLoginField('username');
+        const pOk = validateLoginField('password');
+        if (!uOk || !pOk) {
+            e.preventDefault();
+        }
+    });
+
+    // Clear credentials when the page loads to prevent stored login values after logout
+    window.addEventListener('load', function() {
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+    });
+    </script>
+
+</body>
+</html>

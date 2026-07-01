@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register Your Interest | Cit-E Cycling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .required-star { color: var(--neon-pink); margin-left: 3px; font-weight: 700; }
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent2);
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        .section-feedback {
+            min-height: 1.3rem;
+            font-size: 0.92rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.4rem;
+            margin-bottom: 0.65rem;
+            transition: color 0.2s ease, opacity 0.2s ease;
+            opacity: 0.95;
+        }
+        .section-feedback.positive { color: #a3ffba; }
+        .section-feedback.attention { color: #ffc17b; }
+        .form-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .form-row-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="img/logo.png" alt="Cit-E Cycling Logo" class="navbar-logo-img">
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="register_form.html" class="active">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-header-shape page-header-shape-1"></div>
+        <div class="page-header-shape page-header-shape-2"></div>
+        <h1>📋 Register Your Interest</h1>
+        <p>Join Cit-E Cycling and compete at upcoming events in your area!</p>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main-container" style="max-width:720px;">
+
+        <div class="card">
+            <div class="card-title">📝 Your Registration</div>
+
+            <form id="registerForm" action="register.php" method="POST" novalidate>
+
+                <!-- CSRF token -->
+                <input type="hidden" name="csrf_token" id="csrf_token" value="">
+
+                <!-- SECTION: PERSONAL INFORMATION -->
+                <div class="form-section-title">👤 Personal Information</div>
+                <div class="section-feedback" id="personalInfoFeedback"></div>
+
+                <div class="form-row-grid">
+                    <!-- Firstname -->
+                    <div class="form-group">
+                        <label for="firstname">First Name <span class="required-star">*</span></label>
+                        <input type="text"
+                               id="firstname"
+                               name="firstname"
+                               class="form-control"
+                               placeholder="e.g. Sarah"
+                               maxlength="50"
+                               autocomplete="given-name"
+                               required>
+                        <div class="invalid-feedback">First name required (letters, hyphens &amp; apostrophes only, max 50 chars).</div>
+                        <div class="valid-feedback">✓ Looks good!</div>
+                    </div>
+
+                    <!-- Surname -->
+                    <div class="form-group">
+                        <label for="surname">Surname <span class="required-star">*</span></label>
+                        <input type="text"
+                               id="surname"
+                               name="surname"
+                               class="form-control"
+                               placeholder="e.g. Johnson"
+                               maxlength="50"
+                               autocomplete="family-name"
+                               required>
+                        <div class="invalid-feedback">Surname required (letters, hyphens &amp; apostrophes only, max 50 chars).</div>
+                        <div class="valid-feedback">✓ Looks good!</div>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required-star">*</span></label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="e.g. sarah@example.com"
+                           maxlength="100"
+                           autocomplete="email"
+                           required>
+                    <div class="invalid-feedback">A valid email address is required (max 100 chars).</div>
+                    <div class="valid-feedback">✓ Email is valid!</div>
+                </div>
+
+                <!-- SECTION: TERMS & AGREEMENTS -->
+                <div class="form-section-title">📋 Agreement</div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="terms" name="terms" value="yes" required>
+                        <label for="terms">
+                            I accept the <strong>Terms &amp; Conditions</strong> and consent to being contacted about Cit-E Cycling events. <span class="required-star">*</span>
+                        </label>
+                    </div>
+                    <div class="invalid-feedback" id="termsFeedback" style="display:none;">
+                        You must accept the terms and conditions to register.
+                    </div>
+                </div>
+
+                <!-- SUBMIT SECTION -->
+                <div style="display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap; margin-top:2rem;">
+                    <button type="submit" class="btn btn-primary">
+                        ✅ Submit Registration
+                    </button>
+                    <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+                </div>
+
+                <p style="font-size:0.75rem; color:var(--muted); margin-top:1.2rem;">
+                    <span class="required-star">*</span> Required fields. All information will be securely stored.
+                </p>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2024 <span>Cit-E Cycling</span> &mdash; All rights reserved.
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="interactions.js"></script>
+
+    <script>
+        // ── Generate a simple client-side CSRF token (backed by sessionStorage) ──
+        (function() {
+            let token = sessionStorage.getItem('csrf_token');
+            if (!token) {
+                token = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+                             .map(b => b.toString(16).padStart(2,'0')).join('');
+                sessionStorage.setItem('csrf_token', token);
+            }
+            document.getElementById('csrf_token').value = token;
+        })();
+
+        const registerForm   = document.getElementById('registerForm');
+        const sectionFeedback = document.getElementById('personalInfoFeedback');
+
+        // ── Field validator ──
+        function validateField(id, showFeedback) {
+            const el = document.getElementById(id);
+            if (!el) return true;
+            const val = el.value.trim();
+            let ok = true;
+
+            if (id === 'firstname' || id === 'surname') {
+                ok = val.length > 0 && /^[a-zA-Z\s'\-]{1,50}$/.test(val);
+            } else if (id === 'email') {
+                ok = val.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) && val.length <= 100;
+            }
+
+            if (showFeedback) {
+                el.classList.toggle('is-invalid', !ok);
+                el.classList.toggle('is-valid',   ok);
+            } else {
+                el.classList.remove('is-invalid', 'is-valid');
+            }
+            updatePersonalFeedback();
+            return ok;
+        }
+
+        // ── Section summary feedback ──
+        function updatePersonalFeedback() {
+            const fields = ['firstname', 'surname', 'email'];
+            let invalid = 0, valid = 0;
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (el.classList.contains('is-invalid')) invalid++;
+                if (el.classList.contains('is-valid'))   valid++;
+            });
+            if (invalid > 0) {
+                sectionFeedback.textContent = invalid + ' field' + (invalid > 1 ? 's' : '') + ' need attention.';
+                sectionFeedback.className = 'section-feedback attention';
+            } else if (valid === fields.length) {
+                sectionFeedback.textContent = 'All fields in this section look good.';
+                sectionFeedback.className = 'section-feedback positive';
+            } else {
+                sectionFeedback.textContent = '';
+                sectionFeedback.className = 'section-feedback';
+            }
+        }
+
+        // ── Real-time validation on input and blur ──
+        ['firstname', 'surname', 'email'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function() { validateField(id, true); });
+            el.addEventListener('blur',  function() { validateField(id, true); });
+        });
+
+        // ── Terms checkbox ──
+        document.getElementById('terms').addEventListener('change', function() {
+            var fb = document.getElementById('termsFeedback');
+            if (this.checked) {
+                this.classList.remove('is-invalid');
+                fb.style.display = 'none';
+            } else {
+                this.classList.add('is-invalid');
+                fb.style.display = 'block';
+            }
+        });
+
+        // ── Submit handler ──
+        registerForm.addEventListener('submit', function(e) {
+            var fnOk    = validateField('firstname', true);
+            var snOk    = validateField('surname',   true);
+            var emOk    = validateField('email',     true);
+            var termsEl = document.getElementById('terms');
+            var termsOk = termsEl.checked;
+
+            if (!termsOk) {
+                termsEl.classList.add('is-invalid');
+                document.getElementById('termsFeedback').style.display = 'block';
+            } else {
+                termsEl.classList.remove('is-invalid');
+                document.getElementById('termsFeedback').style.display = 'none';
+            }
+
+            if (!fnOk || !snOk || !emOk || !termsOk) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+</body>
+</html>
